@@ -27,8 +27,7 @@ echo -n "$INVOCATION_ID" > "$HOME/__nixbuildnet_invocation_id"
 SSH_KNOWN_HOSTS_FILE="$(mktemp)"
 echo >"$SSH_KNOWN_HOSTS_FILE" \
   "$NIXBUILD_HOST" \
-  ssh-ed25519 \
-  AAAAC3NzaC1lZDI1NTE5AAAAIPIQCZc54poJ8vqawd8TraNryQeJnvH1eLpIDgbiqymM
+  "$NIXBUILD_KNOWN_HOST"
 
 
 # Create ssh config
