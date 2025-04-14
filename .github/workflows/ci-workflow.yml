@@ -26,6 +26,11 @@ on:
         description: |
           Defines the access token Nix should use when fetching from GitHub.
 
+      ssh_deploy_key:
+        required: false
+        description: |
+          SSH-based access to private github repos.
+
     outputs:
       success:
         value: ${{ jobs.summary.outputs.success }}
