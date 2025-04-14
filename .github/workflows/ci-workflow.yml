@@ -245,6 +245,12 @@ on:
           use the same prefix for multiple invocations of the CI workflow
           within the same workflow.
 
+      nixbuild_host:
+        type: string
+        default: eu.nixbuild.net
+        required: false
+        description: Nix Build Server
+
 jobs:
 
   eval-flake:

@@ -32,7 +32,7 @@ fi
 # Setup known_hosts
 SSH_KNOWN_HOSTS_FILE="$(mktemp)"
 echo >"$SSH_KNOWN_HOSTS_FILE" \
-  eu.nixbuild.net \
+  "$NIXBUILD_HOST" \
   ssh-ed25519 \
   AAAAC3NzaC1lZDI1NTE5AAAAIPIQCZc54poJ8vqawd8TraNryQeJnvH1eLpIDgbiqymM
 
@@ -40,8 +40,8 @@ echo >"$SSH_KNOWN_HOSTS_FILE" \
 # Create ssh config
 SSH_CONFIG_FILE="$(mktemp)"
 cat >"$SSH_CONFIG_FILE" <<EOF
-Host eu.nixbuild.net
-HostName eu.nixbuild.net
+Host $NIXBUILD_HOST
+HostName $NIXBUILD_HOST
 LogLevel ERROR
 StrictHostKeyChecking yes
 UserKnownHostsFile $SSH_KNOWN_HOSTS_FILE
@@ -107,17 +107,17 @@ echo "NIX_SSHOPTS=-F$SSH_CONFIG_FILE" >> "$GITHUB_ENV"
 # Setup Nix builders
 NIX_BUILDERS_FILE="$(mktemp)"
 cat >"$NIX_BUILDERS_FILE" <<EOF
-eu.nixbuild.net x86_64-linux - 200 1 big-parallel,benchmark,kvm,nixos-test
-eu.nixbuild.net aarch64-linux - 200 1 big-parallel,benchmark
+$NIXBUILD_HOST x86_64-linux - 200 1 big-parallel,benchmark,kvm,nixos-test
+$NIXBUILD_HOST aarch64-linux - 200 1 big-parallel,benchmark
 EOF
 
 
 # Setup Nix config
 NIX_CONF_FILE="$(mktemp)"
-NIXBUILD_SUBSTITUTER="ssh://eu.nixbuild.net?priority=100"
+NIXBUILD_SUBSTITUTER="ssh://$NIXBUILD_HOST?priority=100"
 NIXBUILD_SUBSTITUTER_PUBKEY="$(
   ssh -F"$SSH_CONFIG_FILE" \
-    eu.nixbuild.net api settings signing-key-for-builds --show | \
+    "$NIXBUILD_HOST" api settings signing-key-for-builds --show | \
       jq -r '"\(.keyName):\(.publicKey)"'
 )"
 
