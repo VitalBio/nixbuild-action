@@ -271,6 +271,11 @@ jobs:
           nix_version: ${{inputs.nix_version}}
       - name: Pre-evaluation script
         run: ${{inputs.pre_evaluation_script}}
+      - name: Configure SSH
+        run: |
+          eval `ssh-agent -s`
+          ssh-add - <<< "${{ secrets.ssh_deploy_key }}"
+          echo "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}" >> $GITHUB_ENV
       - name: Find builds
         id: find-builds
         run: |
