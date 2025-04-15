@@ -57,6 +57,13 @@ on:
           a runner that already has Nix installed (most likely a self-hosted
           runner).
 
+      skip_nix_install_eval:
+        type: boolean
+        required: false
+        default: false
+        description: |
+          Like skip_nix_install, but for the evaluation step.
+
       nix_version:
         type: string
         default: '2.24.12'
@@ -279,7 +286,7 @@ jobs:
       builds: ${{ steps.find-builds.outputs.builds }}
     steps:
       - uses: actions/checkout@v4
-      - if: ${{ ! inputs.skip_nix_install }}
+      - if: ${{ ! inputs.skip_nix_install_eval }}
         uses: nixbuild/nix-quick-install-action@v30
         with:
           github_access_token: ${{secrets.github_access_token}}
