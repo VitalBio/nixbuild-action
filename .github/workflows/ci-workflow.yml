@@ -275,13 +275,6 @@ jobs:
             experimental-features = nix-command flakes
             ${{inputs.nix_conf}}
           nix_version: ${{inputs.nix_version}}
-      - name: Cache Nix Eval Cache
-        uses: actions/cache@v4
-        with:
-          key: nix-eval-cache
-          path: |
-            ~/.cache/nix/eval-cache-v4
-            ~/.cache/nix/eval-cache-v5
       - name: Pre-evaluation script
         run: ${{inputs.pre_evaluation_script}}
       - name: Configure SSH
