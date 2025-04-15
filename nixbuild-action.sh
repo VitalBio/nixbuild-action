@@ -17,6 +17,8 @@ function add_env() {
   nixbuildnet_env="$nixbuildnet_env $key=\"$val\""
 }
 
+env
+
 # Create a unique invocation id, since there is no way to separate different
 # instances of the same job (created with a build matrix). GitHub should really
 # expose a "step id" in addition to their run id.
