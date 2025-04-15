@@ -37,6 +37,7 @@ SSH_CONFIG_FILE="$(mktemp)"
 cat >"$SSH_CONFIG_FILE" <<EOF
 Host $NIXBUILD_HOST
 HostName $NIXBUILD_HOST
+Port $NIXBUILD_PORT
 LogLevel ERROR
 StrictHostKeyChecking yes
 UserKnownHostsFile $SSH_KNOWN_HOSTS_FILE

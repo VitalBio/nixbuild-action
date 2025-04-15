@@ -251,6 +251,12 @@ on:
         required: false
         description: Nix Build Server
 
+      nixbuild_port:
+        type: string
+        default: 22
+        required: false
+        description: Nix Build Server Port
+
       nixbuild_known_host:
         type: string
         default: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPIQCZc54poJ8vqawd8TraNryQeJnvH1eLpIDgbiqymM
@@ -330,6 +336,7 @@ jobs:
         with:
           nixbuild_token: ${{secrets.nixbuild_token}}
           nixbuild_host: ${{inputs.nixbuild_host}}
+          nixbuild_port: ${{inputs.nixbuild_port}}
           nixbuild_known_host: ${{inputs.nixbuild_known_host}}
           caches: ${{inputs.caches}}
           reuse-build-failures: ${{inputs.reuse-build-failures}}

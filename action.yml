@@ -28,6 +28,12 @@ inputs:
     required: false
     description: Nix Build Server
 
+  nixbuild_port:
+    type: string
+    default: 22
+    required: false
+    description: Nix Build Server Port
+
   nixbuild_known_host:
     type: string
     default: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPIQCZc54poJ8vqawd8TraNryQeJnvH1eLpIDgbiqymM
