@@ -471,4 +471,7 @@ jobs:
         uses: vitalbio/nixbuild-action@master
         with:
           nixbuild_token: ${{secrets.nixbuild_token}}
+          nixbuild_host: ${{inputs.nixbuild_host}}
+          nixbuild_port: ${{inputs.nixbuild_port}}
+          nixbuild_known_host: ${{inputs.nixbuild_known_host}}
           generate_summary_for: 'workflow'
