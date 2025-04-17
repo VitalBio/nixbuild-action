@@ -346,7 +346,7 @@ jobs:
             experimental-features = nix-command flakes
             ${{inputs.nix_conf}}
           nix_version: ${{inputs.nix_version}}
-      - uses: vitalbio/nixbuild-action@master
+      - uses: vitalbio/nixbuild-action@v20
         with:
           nixbuild_token: ${{secrets.nixbuild_token}}
           nixbuild_host: ${{inputs.nixbuild_host}}
@@ -468,7 +468,7 @@ jobs:
           fi
       - name: Generate nixbuild.net summary
         if: ${{ always() && inputs.generate_build_summary }}
-        uses: vitalbio/nixbuild-action@master
+        uses: vitalbio/nixbuild-action@v20
         with:
           nixbuild_token: ${{secrets.nixbuild_token}}
           nixbuild_host: ${{inputs.nixbuild_host}}
