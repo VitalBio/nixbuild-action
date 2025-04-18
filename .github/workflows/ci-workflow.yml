@@ -416,6 +416,8 @@ jobs:
           TOP_ATTR=$(jq -r .top_attr <<< "$JOB")
           SYSTEM=$(jq -r .system <<< "$JOB")
           ATTR=$(jq -r .attr <<< "$JOB")
+          NAME=$(jq -r .name <<< "$JOB")
+          DESC=$(jq -r .description <<< "$JOB")
 
           nix build "${{inputs.flake}}#${TOP_ATTR}.${SYSTEM}.${ATTR}" \
             --print-build-logs \
@@ -429,15 +431,16 @@ jobs:
           if ! [ -s "$RESULTS" ]; then
             echo '[{"success":false}]' > "$RESULTS"
             if [ "${{ inputs.ignore_build_failures }}" == "true" ]; then
-              echo "::error title=${{matrix.build.top_attr}}.${{matrix.build.system}}.${{matrix.build.attr}}::Build failed"
+              echo "::error title=${TOP_ATTR}.${SYSTEM}.${ATTR}::Build failed"
             else
               status=1
+              break
             fi
           fi
 
-          done
+          jq -c '{success: true, name: "$NAME", description: "$DESC", label: "$LABEL"} + .[0] | {"${TOP_ATTR}": {"${SYSTEM}": {"${ATTR}": .}}}' "$RESULTS" >> "$ARTIFACT_PREFIX.json"
 
-          # jq -c '{success: true, name: "${{matrix.build.name}}", description: "${{matrix.build.description}}", label: "${{matrix.build.label}}"} + .[0] | {"${{matrix.build.top_attr}}": {"${{matrix.build.system}}": {"${{matrix.build.attr}}": .}}}' "$RESULTS" > "$ARTIFACT_PREFIX.json"
+          done
 
           exit "$status"
 
