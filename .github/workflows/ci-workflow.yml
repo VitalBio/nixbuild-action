@@ -387,9 +387,9 @@ jobs:
             done < <(echo "${{inputs.nix_args}}")
           fi
 
-          echo "${{matrix.build.jobs}}"
+          echo "${{toJSON(matrix.build.jobs)}}"
 
-          mapfile -t JOBS < <(jq -c .[] <<< "${{matrix.build.jobs}}")
+          mapfile -t JOBS < <(jq -c .[] <<< "${{toJSON(matrix.build.jobs)}}")
 
           for JOB in "${JOBS[@]}"; do
 
