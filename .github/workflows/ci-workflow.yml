@@ -160,6 +160,24 @@ on:
           .attr     : The build's attribute name, as defined in your flake
           .name     : The build's derivation name
 
+      group_builds:
+        type: string
+        required: false
+        default: '(.name | split("-") | .[0]) + " [" + .system + "]"'
+        description: |
+          A `jq` string expression that defines the label of the build. The
+          label is visible in the GitHub Actions UI.
+          See the `jq` documentation for info on how to write string
+          expressions: https://stedolan.github.io/jq/manual/.
+
+          When evaluating the expression, the following fields will be
+          available:
+
+          .top_attr : Either "checks" or "packages"
+          .system   : The build's system ("x86_64-linux", "aarch64-linux" etc)
+          .attr     : The build's attribute name, as defined in your flake
+          .name     : The build's derivation name
+
       flake:
         type: string
         required: false
@@ -327,7 +345,7 @@ jobs:
           ALL_JOBS=$(jq -rc  < "$flake_json" '{hydraJobs: (.hydraJobs // {}), checks: (.checks // {}), packages: (.packages // {})}')
           FLATTENED=$(jq -rc <<< "$ALL_JOBS" 'to_entries|map(.key as $top_attr |.value|to_entries|map(.key as $sys |.value|to_entries|map(.key as $attr | {name:"",description:"",top_attr:$top_attr,system:$sys,attr:$attr} + .value)))|flatten')
           FILTERED=$(jq -rc <<< "$FLATTENED" 'map(select(${{inputs.filter_builds}}))|map(. as $x | (${{inputs.label_builds}}) as $l | $x + {label: $l})')
-          GROUPED=$(jq -rc  <<< "$FILTERED"  'group_by(((.name | split("-") | .[0]) + .system))[] | {label: ((.[0].name | split("-") | .[0]) + " [" + .[0].system + "]"), jobs: (. | tostring)}')
+          GROUPED=$(jq -rc  <<< "$FILTERED"  'map( . += { group: (${{inputs.group_builds}}) }) | group_by(.group)[] | { label: .[0].group, jobs: . }')
           jq -scr <<< "$GROUPED" >> "$GITHUB_OUTPUT" '"builds=\(.)"' 
 
   build:
@@ -387,9 +405,9 @@ jobs:
             done < <(echo "${{inputs.nix_args}}")
           fi
 
-          echo '${{matrix.build.jobs}}'
+          echo '${{toJSON(matrix.build.jobs)}}'
 
-          mapfile -t JOBS < <(jq -c .[] <<< '${{matrix.build.jobs}}')
+          mapfile -t JOBS < <(jq -c .[] <<< '${{toJSON(matrix.build.jobs)}}')
 
           for JOB in "${JOBS[@]}"; do
 
