@@ -387,6 +387,8 @@ jobs:
             done < <(echo "${{inputs.nix_args}}")
           fi
 
+          echo "${{matrix.build.jobs}}"
+
           mapfile -t JOBS < <(jq -c .[] <<< "${{matrix.build.jobs}}")
 
           for JOB in "${JOBS[@]}"; do
