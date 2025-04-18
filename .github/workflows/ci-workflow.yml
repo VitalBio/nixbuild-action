@@ -391,7 +391,7 @@ jobs:
         id: build
         run: |
           set -x
-          ARTIFACT_PREFIX="$(echo "${{matrix.build.label}}" | tr '":<>|*?\\/' '_')-$RANDOM$RANDOM"
+          ARTIFACT_PREFIX="$(echo "${{matrix.build.label}}" | tr ' []":<>|*?\\/' '_')-$RANDOM$RANDOM"
           echo "ARTIFACT_PREFIX=$ARTIFACT_PREFIX" >> "$GITHUB_ENV"
 
           RESULTS="build.json"
