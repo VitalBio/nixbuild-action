@@ -372,6 +372,7 @@ jobs:
       - name: "Build ${{matrix.build.label}}"
         id: build
         run: |
+          set -x
           ARTIFACT_PREFIX="$(echo "${{matrix.build.label}}" | tr '":<>|*?\\/' '_')-$RANDOM$RANDOM"
           echo "ARTIFACT_PREFIX=$ARTIFACT_PREFIX" >> "$GITHUB_ENV"
 
