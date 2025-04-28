@@ -461,55 +461,55 @@ jobs:
             ${{ env.ARTIFACT_PREFIX }}.log
 
 
-  summary:
-    name: "Summary"
-    needs: build
-    runs-on: ${{inputs.runs_on}}
-    outputs:
-      success: ${{ steps.merge.outputs.success }}
-      results: ${{ steps.merge.outputs.results }}
-    steps:
-      - id: generate-artifact-prefix
-        run: |
-          if [ -z "${{ inputs.artifact_prefix }}" ]; then
-            ARTIFACT_PREFIX="$RANDOM$RANDOM"
-          else
-            ARTIFACT_PREFIX="${{ inputs.artifact_prefix }}"
-          fi
-          echo "ARTIFACT_PREFIX=$ARTIFACT_PREFIX" >> "$GITHUB_ENV"
-      - id: merge-results
-        uses: actions/upload-artifact/merge@v4
-        with:
-          name: ${{ env.ARTIFACT_PREFIX }}-build-results
-          pattern: build-result-*
-          delete-merged: true
-      - id: merge-logs
-        uses: actions/upload-artifact/merge@v4
-        with:
-          name: ${{ env.ARTIFACT_PREFIX }}-build-logs
-          pattern: build-log-*
-          delete-merged: true
-      - id: download
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.ARTIFACT_PREFIX }}-build-results
-          path: ~/results
-      - id: merge
-        run: |
-          jq -rcs 'reduce .[] as $x ({}; . * $x)|"results=\(.)"' \
-            "${{steps.download.outputs.download-path}}"/*.json \
-            >> "$GITHUB_OUTPUT"
-          if jq -s '..|.success?|select(if . == false then ""|halt_error(1) else false end)' "${{steps.download.outputs.download-path}}"/*.json; then
-            echo "success=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "success=false" >> "$GITHUB_OUTPUT"
-          fi
-      - name: Generate nixbuild.net summary
-        if: ${{ always() && inputs.generate_build_summary }}
-        uses: vitalbio/nixbuild-action@master
-        with:
-          nixbuild_token: ${{secrets.nixbuild_token}}
-          nixbuild_host: ${{inputs.nixbuild_host}}
-          nixbuild_port: ${{inputs.nixbuild_port}}
-          nixbuild_known_host: ${{inputs.nixbuild_known_host}}
-          generate_summary_for: 'workflow'
+#   summary:
+#     name: "Summary"
+#     needs: build
+#     runs-on: ${{inputs.runs_on}}
+#     outputs:
+#       success: ${{ steps.merge.outputs.success }}
+#       results: ${{ steps.merge.outputs.results }}
+#     steps:
+#       - id: generate-artifact-prefix
+#         run: |
+#           if [ -z "${{ inputs.artifact_prefix }}" ]; then
+#             ARTIFACT_PREFIX="$RANDOM$RANDOM"
+#           else
+#             ARTIFACT_PREFIX="${{ inputs.artifact_prefix }}"
+#           fi
+#           echo "ARTIFACT_PREFIX=$ARTIFACT_PREFIX" >> "$GITHUB_ENV"
+#       - id: merge-results
+#         uses: actions/upload-artifact/merge@v4
+#         with:
+#           name: ${{ env.ARTIFACT_PREFIX }}-build-results
+#           pattern: build-result-*
+#           delete-merged: true
+#       - id: merge-logs
+#         uses: actions/upload-artifact/merge@v4
+#         with:
+#           name: ${{ env.ARTIFACT_PREFIX }}-build-logs
+#           pattern: build-log-*
+#           delete-merged: true
+#       - id: download
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: ${{ env.ARTIFACT_PREFIX }}-build-results
+#           path: ~/results
+#       - id: merge
+#         run: |
+#           jq -rcs 'reduce .[] as $x ({}; . * $x)|"results=\(.)"' \
+#             "${{steps.download.outputs.download-path}}"/*.json \
+#             >> "$GITHUB_OUTPUT"
+#           if jq -s '..|.success?|select(if . == false then ""|halt_error(1) else false end)' "${{steps.download.outputs.download-path}}"/*.json; then
+#             echo "success=true" >> "$GITHUB_OUTPUT"
+#           else
+#             echo "success=false" >> "$GITHUB_OUTPUT"
+#           fi
+#       - name: Generate nixbuild.net summary
+#         if: ${{ always() && inputs.generate_build_summary }}
+#         uses: vitalbio/nixbuild-action@master
+#         with:
+#           nixbuild_token: ${{secrets.nixbuild_token}}
+#           nixbuild_host: ${{inputs.nixbuild_host}}
+#           nixbuild_port: ${{inputs.nixbuild_port}}
+#           nixbuild_known_host: ${{inputs.nixbuild_known_host}}
+#           generate_summary_for: 'workflow'
